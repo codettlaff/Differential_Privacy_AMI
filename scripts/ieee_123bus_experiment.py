@@ -239,7 +239,7 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
-plot_results(network, results, plot_th=True, plot_ldf=True, plot_dss=True)
+plot_results(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
 
 print('')
 
