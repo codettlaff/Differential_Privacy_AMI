@@ -10,7 +10,7 @@ from differential_privacy_ami.power_flow import RadialNetwork
 EXPERIMENT_NAME = 'ieee_123bus'
 T_SET = 100 # Limit Data Timesteps
 EPSILON_VALUES = np.linspace(50, 1000, 10)
-EPSILON = 100
+EPSILON = 1000
 
 NETWORK_NAME = 'redd_house_neighborhood'
 B = 5e3 # HVAC Rated Power
