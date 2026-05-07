@@ -138,21 +138,43 @@ def load_network():
     network.Q_tilde = Q_tilde
     return network
 
+def solve_network(network, show=False):
+
+    # Get Results
+    p_acc_line_th, v_acc_node_th, p_acc_th, v_acc_th = network.theoretical_accuracy(B, EPSILON)  # Theoretical accuracy - does not require solving power flow.
+
+    # Solve using Lin-Dist-Flow
+    network.lin_dist_flow(tilde=False)  # Solve Using True P injection
+    network.lin_dist_flow(tilde=True)  # Solve Using Noisy P injection
+    p_acc_line_ldf, v_acc_node_ldf, p_acc_ldf, v_acc_ldf = network.empirical_accuracy()  # Get Accuracy using difference between results.
+
+    # Solve Using OpenDSS (Nonlinear Dist-Flow)
+    network.solve_dss(tilde=False)  # Solve Using True P injection
+    network.solve_dss(tilde=True)  # Solve Using Noisy P injection
+    p_acc_line_dss, v_acc_node_dss, p_acc_dss, v_acc_dss = network.empirical_accuracy()  # Get Accuracy using difference between results.
+
+    if show:
+        network.power_flow_results(show=True, tilde=False)
+        network.power_flow_results(show=True, tilde=True)
+
+    return{
+        'p_acc_line_th': p_acc_line_th,
+        'v_acc_node_th': v_acc_node_th,
+        'p_acc_th': p_acc_th,
+        'v_acc_th': v_acc_th,
+        'p_acc_line_ldf': p_acc_line_ldf,
+        'v_acc_node_ldf': v_acc_node_ldf,
+        'p_acc_ldf': p_acc_ldf,
+        'v_acc_ldf': v_acc_ldf,
+        'p_acc_line_dss': p_acc_line_dss,
+        'v_acc_node_dss': v_acc_node_dss,
+        'p_acc_dss': p_acc_dss,
+        'v_acc_dss': v_acc_dss
+    }
+
 # make_network() # Only need to run this function once.
 network = load_network()
-
-# Get Results
-p_acc_line_th, v_acc_node_th, p_acc_th, v_acc_th = network.theoretical_accuracy(B, EPSILON) # Theoretical accuracy - does not require solving power flow.
-
-# Solve using Lin-Dist-Flow
-network.lin_dist_flow(tilde=False) # Solve Using True P injection
-network.lin_dist_flow(tilde=True) # Solve Using Noisy P injection
-p_acc_line_ldf, v_acc_node_ldf, p_acc_ldf, v_acc_ldf = network.empirical_accuracy() # Get Accuracy using difference between results.
-
-# Solve Using OpenDSS (Nonlinear Dist-Flow)
-network.solve_dss(tilde=False) # Solve Using True P injection
-network.solve_dss(tilde=True) # Solve Using Noisy P injection
-p_acc_line_dss, v_acc_node_dss, p_acc_dss, v_acc_dss = network.empirical_accuracy() # Get Accuracy using difference between results.
+results = solve_network(network, show=True)
 
 print('')
 
