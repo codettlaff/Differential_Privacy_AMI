@@ -172,35 +172,79 @@ def solve_network(network, show=False):
         'v_acc_dss': v_acc_dss
     }
 
-make_network() # Only need to run this function once.
+def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False):
+
+    def get_line_data(key):
+        data = results[key]
+        dist = np.array([network.distance_to_root(j) for (i, j),data in data.items()])
+        vals = np.array(list(data.values()))
+        return dist, vals
+
+    def get_node_data(key):
+        data = results[key]
+        dist = np.array([network.distance_to_root(i) for i in data.keys()])
+        vals = np.array(list(data.values()))
+        return dist, vals
+
+    def plot_fit(x, y, label):
+        if len(x) < 2: return
+        coeffs = np.polyfit(x, y, 1)
+        x_fit = np.linspace(x.min(), x.max(), 100)
+        y_fit = np.polyval(coeffs, x_fit)
+        plt.plot(x_fit, y_fit, linestyle='--', label=f'{label} fit')
+
+    # Plot Branch Power Accuracy
+
+    if plot_th:
+        dist_line, p_acc_th = get_line_data('p_acc_line_th')
+        mask = p_acc_th != 0
+        plt.scatter(dist_line[mask], p_acc_th[mask], label='TH')
+        plot_fit(dist_line[mask], p_acc_th[mask], 'TH')
+
+    if plot_ldf:
+        dist_line, p_acc_ldf = get_line_data('p_acc_line_ldf')
+        plt.scatter(dist_line, p_acc_ldf, label='LDF')
+        plot_fit(dist_line, p_acc_ldf, 'LDF')
+
+    if plot_dss:
+        dist_line, p_acc_dss = get_line_data('p_acc_line_dss')
+        plt.scatter(dist_line, p_acc_dss, label='DSS')
+        plot_fit(dist_line, p_acc_dss, 'DSS')
+
+    plt.xlabel('Distance to Root')
+    plt.ylabel('Branch Power Accuracy')
+    plt.legend()
+    plt.title('Branch Power Accuracy vs Distance')
+
+    # Plot Node Voltage Accuracy
+    plt.figure()
+
+    if plot_th:
+        dist_node, v_acc_th = get_node_data('v_acc_node_th')
+        plt.scatter(dist_node, v_acc_th, label='TH')
+        plot_fit(dist_node, v_acc_th, 'TH')
+
+    if plot_ldf:
+        dist_node, v_acc_ldf = get_node_data('v_acc_node_ldf')
+        plt.scatter(dist_node, v_acc_ldf, label='LDF')
+        plot_fit(dist_node, v_acc_ldf, 'LDF')
+
+    if plot_dss:
+        dist_node, v_acc_dss = get_node_data('v_acc_node_dss')
+        plt.scatter(dist_node, v_acc_dss, label='DSS')
+        plot_fit(dist_node, v_acc_dss, 'DSS')
+
+    plt.xlabel("Distance to Root")
+    plt.ylabel("Node Voltage Accuracy")
+    plt.legend()
+    plt.title("Node Voltage Accuracy vs Distance")
+
+    plt.show()
+
+# make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
-
-
-dist_line = []
-dist_node = []
-p_acc_th = []
-v_acc_th = []
-for (i,j), p in results['p_acc_line_th'].items():
-    dist_line.append(network.distance_to_root(i))
-    p_acc_th.append(p)
-for i, v in results['v_acc_node_th'].items():
-    v_acc_th.append(v)
-
-p_acc_ldf = []
-v_acc_ldf = []
-for (i,j), p in results['p_acc_line_ldf'].items():
-    p_acc_ldf.append(p)
-for i, v in results['v_acc_node_ldf'].items():
-    v_acc_ldf.append(v)
-
-p_acc_dss = []
-v_acc_dss = []
-for (i,j), p in results['p_acc_dss'].items():
-    p_acc_dss.append(p)
-for i, v in results['v_acc_dss'].items():
-    v_acc_dss.append(v)
-
+plot_results(network, results, plot_th=False, plot_ldf=True, plot_dss=True)
 
 print('')
 

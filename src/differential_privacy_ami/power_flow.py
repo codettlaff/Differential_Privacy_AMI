@@ -486,7 +486,7 @@ class RadialNetwork:
         for (i, j) in self.lines:
             num = sum(sigma_p.get((i, j, t), 0.0) for t in range(self.T))
             den = sum(self.p.get((i, j, t), 0.0) for t in range(self.T))
-            val = 1 - (num / (2 * den)) if den != 0 else np.nan
+            val = 1 - (num / (2 * den)) if den != 0 else 0.0
             p_acc_line[(i, j)] = max(0.0, min(1.0, val)) # Min Accuracy below 0 means nothing
 
         # --- Per-node accuracy ---
