@@ -4,10 +4,11 @@ import opendssdirect as dss
 
 class RadialNetwork:
 
-    def __init__(self, name, dss_filepath='master.dss', B=5e3, epsilon=1000):
+    def __init__(self, name, dss_filepath='master.dss', private_dss_filepath=None, B=5e3, epsilon=1000):
 
         self.name = name
         self.dss_filepath = dss_filepath
+        self.private_dss_filepath = private_dss_filepath
 
         self.B=5e3
         self.epsilon=1000
@@ -20,7 +21,8 @@ class RadialNetwork:
         self.children = {}
         self.parent = {}
 
-        self.build_from_dss()
+        if dss_filepath is not None: self.build_from_dss(tilde=False)
+        if private_dss_filepath is not None: self.build_from_dss(tilde=True)
 
         # True Power Flow Results
         self.p = {}  # {(i,j,t): P_ij(t)} Branch power flow
@@ -38,10 +40,13 @@ class RadialNetwork:
         self.p_acc = {}
         self.V_acc = {}
 
-    def build_from_dss(self):
+    def build_from_dss(self, tilde=False):
+
+        if tilde: dss_filepath = self.private_dss_filepath
+        else: dss_filepath = self.dss_filepath
 
         dss.Text.Command("Clear")
-        dss.Text.Command(f"Compile [{self.dss_filepath}]")
+        dss.Text.Command(f"Compile [{dss_filepath}]")
 
         # Get Base Voltage of the Source
         dss.Text.Command("CalcVoltageBases")
@@ -115,10 +120,12 @@ class RadialNetwork:
 
         self.nodes = list(nodes.keys())
         self.T = len(nodes[1]["P"])  # Number of Timesteps
-        self.P = {i: data["P"] for i, data in nodes.items()}  # Copy True Injections
-        self.Q = {i: data["Q"] for i, data in nodes.items()}  # Copy True Injections
-        self.P_tilde = {i: [0.0] * self.T for i, data in nodes.items()}  # Initialize Noisy Injections
-        self.Q_tilde = {i: [0.0] * self.T for i, data in nodes.items()} # Initialize Noisy Injections
+        if tilde:
+            self.P_tilde = {i: data["P"] for i, data in nodes.items()}
+            self.Q_tilde = {i: data["Q"] for i, data in nodes.items()}
+        else:
+            self.P = {i: data["P"] for i, data in nodes.items()}  # Copy True Injections
+            self.Q = {i: data["Q"] for i, data in nodes.items()}  # Copy True Injections
 
         # Tree Structure
         self.children = {i: [] for i in self.nodes}  # Initialize Dict

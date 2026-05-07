@@ -128,14 +128,9 @@ def make_network():
 
 def load_network():
     paths = get_paths()
-    dss_filepath = os.path.join(paths["experiments"], EXPERIMENT_NAME, NETWORK_NAME + '_private.dss')
-    network = RadialNetwork(NETWORK_NAME, dss_filepath=dss_filepath)
-    P_tilde = network.P
-    Q_tilde = network.Q
     dss_filepath = os.path.join(paths["experiments"], EXPERIMENT_NAME, NETWORK_NAME + '.dss')
-    network = RadialNetwork(NETWORK_NAME, dss_filepath=dss_filepath)
-    network.P_tilde = P_tilde
-    network.Q_tilde = Q_tilde
+    private_dss_filepath = os.path.join(paths["experiments"], EXPERIMENT_NAME, NETWORK_NAME + '_private.dss')
+    network = RadialNetwork(NETWORK_NAME, dss_filepath=dss_filepath, private_dss_filepath=private_dss_filepath, B=B)
     return network
 
 def solve_network(network, show=False):
@@ -244,7 +239,7 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
-plot_results(network, results, plot_th=False, plot_ldf=True, plot_dss=True)
+plot_results(network, results, plot_th=True, plot_ldf=True, plot_dss=True)
 
 print('')
 
