@@ -295,8 +295,8 @@ class RadialNetwork:
             self.q_tilde = q_dst
         else:
             self.V = {k: np.sqrt(v) for k, v in v_dst.items()}
-            self.p_tilde = p_dst
-            self.q_tilde = q_dst
+            self.p = p_dst
+            self.q = q_dst
 
     def solve_dss(self, tilde=False):
 
