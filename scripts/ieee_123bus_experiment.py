@@ -174,7 +174,32 @@ def solve_network(network, show=False):
 
 # make_network() # Only need to run this function once.
 network = load_network()
-results = solve_network(network, show=True)
+results = solve_network(network)
+
+dist_line = []
+dist_node = []
+p_acc_th = []
+v_acc_th = []
+for (i,j), p in results['p_acc_line_th'].items():
+    dist_line.append(network.distance_to_root(i))
+    p_acc_th.append(p)
+for i, v in results['v_acc_node_th'].items():
+    v_acc_th.append(v)
+
+p_acc_ldf = []
+v_acc_ldf = []
+for (i,j), p in results['p_acc_line_ldf'].items():
+    p_acc_ldf.append(p)
+for i, v in results['v_acc_node_ldf'].items():
+    v_acc_ldf.append(v)
+
+p_acc_dss = []
+v_acc_dss = []
+for (i,j), p in results['p_acc_dss'].items():
+    p_acc_dss.append(p)
+for i, v in results['v_acc_dss'].items():
+    v_acc_dss.append(v)
+
 
 print('')
 
