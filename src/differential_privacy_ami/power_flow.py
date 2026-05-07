@@ -453,7 +453,7 @@ class RadialNetwork:
             den = sum(self.V.get((i, t), 0.0) for t in range(self.T))
             V_acc_node[i] = 1 - (num / (2 * den)) if den != 0 else np.nan
 
-        return p_acc, V_acc, p_acc_line, V_acc_node
+        return p_acc_line, V_acc_node, p_acc, V_acc,
 
     def empirical_accuracy_old(self):
 
