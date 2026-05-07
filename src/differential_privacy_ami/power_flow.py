@@ -495,6 +495,6 @@ class RadialNetwork:
             num = sum(sigma_v.get((j, t), 0.0) for t in range(self.T))
             den = sum((self.V.get((j, t), 0.0)) ** 2 for t in range(self.T))
 
-            v_acc_node[j] = 1 - (num / (2 * den)) if den != 0 else np.nan
+            v_acc_node[j] = 1 - (num / (2 * den)) if den != 0 else 0.0
 
         return p_acc_line, v_acc_node, p_acc_lower_bound, v_acc_lower_bound
