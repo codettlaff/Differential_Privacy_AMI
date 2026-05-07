@@ -10,7 +10,7 @@ from differential_privacy_ami.power_flow import RadialNetwork
 EXPERIMENT_NAME = 'ieee_123bus'
 T_SET = 100 # Limit Data Timesteps
 EPSILON_VALUES = np.linspace(50, 1000, 10)
-EPSILON = 1000
+EPSILON = 100
 
 NETWORK_NAME = 'redd_house_neighborhood'
 B = 5e3 # HVAC Rated Power
@@ -241,7 +241,7 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 
     plt.show()
 
-# make_network() # Only need to run this function once.
+make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
 plot_results(network, results, plot_th=False, plot_ldf=True, plot_dss=True)
