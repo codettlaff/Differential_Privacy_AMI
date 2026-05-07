@@ -455,30 +455,6 @@ class RadialNetwork:
 
         return p_acc_line, V_acc_node, p_acc, V_acc,
 
-    def empirical_accuracy_old(self):
-
-        self.e_p = {k: np.abs(self.p_tilde[k] - self.p[k]) for k in self.p}
-        self.e_V = {k: np.abs(self.V_tilde[k] - self.V[k]) for k in self.V}
-
-        self.e_p_norm = {
-            k: (np.zeros_like(self.e_p[k]) if np.max(self.p[k]) == 0 else self.e_p[k] / np.max(self.p[k]))
-            for k in self.e_p}
-
-        self.e_V_norm = {
-            k: (np.zeros_like(self.e_V[k]) if np.max(self.V[k]) == 0 else self.e_V[k] / np.max(self.V[k]))
-            for k in self.e_V
-        }
-
-        total_e_p = sum(self.e_p.values())
-        total_p = sum(self.p.values())
-        p_acc = 1 - (total_e_p / (2 * total_p))
-
-        total_e_V = sum(self.e_V.values())
-        total_V = sum(self.V.values())
-        V_acc = 1 - (total_e_V / (2 * total_V))
-
-        return p_acc, V_acc
-
     def theoretical_accuracy(self, B, epsilon):
 
         sigma_p = {}
