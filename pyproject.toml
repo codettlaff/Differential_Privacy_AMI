@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "your-package-name"
+name = "differential_privacy_ami"
 version = "0.1.0"
 description = "Short description"
 authors = [{name="Your Name"}]
