@@ -138,12 +138,12 @@ def solve_network(network, show=False):
     # Solve using Lin-Dist-Flow
     network.lin_dist_flow(tilde=False)  # Solve Using True P injection
     network.lin_dist_flow(tilde=True)  # Solve Using Noisy P injection
-    p_acc_line_ldf, v_acc_node_ldf, p_acc_ldf, v_acc_ldf = network.empirical_accuracy()  # Get Accuracy using difference between results.
+    e_p_line_ldf, e_v_line_ldf, p_acc_line_ldf, v_acc_node_ldf, p_acc_ldf, v_acc_ldf = network.empirical_accuracy()  # Get Accuracy using difference between results.
 
     # Solve Using OpenDSS (Nonlinear Dist-Flow)
     network.solve_dss(tilde=False)  # Solve Using True P injection
     network.solve_dss(tilde=True)  # Solve Using Noisy P injection
-    p_acc_line_dss, v_acc_node_dss, p_acc_dss, v_acc_dss = network.empirical_accuracy()  # Get Accuracy using difference between results.
+    e_p_line_dss, e_v_line_dss, p_acc_line_dss, v_acc_node_dss, p_acc_dss, v_acc_dss = network.empirical_accuracy()  # Get Accuracy using difference between results.
 
     # Theoretical Accuracy, Normalized by True Dist-Flow Results
     p_acc_line_th, v_acc_node_th, p_acc_th, v_acc_th = network.theoretical_accuracy(B, EPSILON)  # Theoretical accuracy
@@ -157,10 +157,14 @@ def solve_network(network, show=False):
         'v_acc_node_th': v_acc_node_th,
         'p_acc_th': p_acc_th,
         'v_acc_th': v_acc_th,
+        'e_p_line_ldf': e_p_line_ldf,
+        'e_v_node_ldf': e_v_line_ldf,
         'p_acc_line_ldf': p_acc_line_ldf,
         'v_acc_node_ldf': v_acc_node_ldf,
         'p_acc_ldf': p_acc_ldf,
         'v_acc_ldf': v_acc_ldf,
+        'e_p_line_dss': e_p_line_dss,
+        'e_v_node_dss': e_v_line_dss,
         'p_acc_line_dss': p_acc_line_dss,
         'v_acc_node_dss': v_acc_node_dss,
         'p_acc_dss': p_acc_dss,
@@ -202,11 +206,13 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 
     if plot_ldf:
         dist_line, p_acc_ldf = get_line_data('p_acc_line_ldf')
+        dist_line, e_p_line = get_line_data('e_p_line_ldf')
         plt.scatter(dist_line, p_acc_ldf, label='LDF')
         plot_fit(dist_line, p_acc_ldf, 'LDF')
 
     if plot_dss:
         dist_line, p_acc_dss = get_line_data('p_acc_line_dss')
+        dist_line, e_p_line_dss = get_line_data('e_p_line_dss')
         plt.scatter(dist_line, p_acc_dss, label='DSS')
         plot_fit(dist_line, p_acc_dss, 'DSS')
 
@@ -230,11 +236,13 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 
     if plot_ldf:
         dist_node, v_acc_ldf = get_node_data('v_acc_node_ldf')
+        dist_node, e_v_node = get_node_data('e_v_node_ldf')
         plt.scatter(dist_node, v_acc_ldf, label='LDF')
         plot_fit(dist_node, v_acc_ldf, 'LDF')
 
     if plot_dss:
         dist_node, v_acc_dss = get_node_data('v_acc_node_dss')
+        dist_node, e_v_node = get_node_data('e_v_node_dss')
         plt.scatter(dist_node, v_acc_dss, label='DSS')
         plot_fit(dist_node, v_acc_dss, 'DSS')
 

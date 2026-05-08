@@ -447,20 +447,24 @@ class RadialNetwork:
         V_acc = 1 - (total_e_V / (2 * total_V))
 
         # --- Per-line power accuracy ---
-        p_acc_line = {}
+        e_p_line = {}
+        p_acc_line_norm = {}
         for (i, j) in self.lines:
             num = sum(self.e_p.get((i, j, t), 0.0) for t in range(self.T))
             den = sum(self.p.get((i, j, t), 0.0) for t in range(self.T))
-            p_acc_line[(i, j)] = 1 - (num / (2 * den)) if den != 0 else np.nan
+            e_p_line[(i,j)] = num
+            p_acc_line_norm[(i, j)] = 1 - (num / (2 * den)) if den != 0 else np.nan
 
         # --- Per-node voltage accuracy ---
-        V_acc_node = {}
+        e_v_node = {}
+        V_acc_node_norm = {}
         for i in self.nodes:
             num = sum(self.e_V.get((i, t), 0.0) for t in range(self.T))
             den = sum(self.V.get((i, t), 0.0) for t in range(self.T))
-            V_acc_node[i] = 1 - (num / (2 * den)) if den != 0 else np.nan
+            e_v_node[i] = num
+            V_acc_node_norm[i] = 1 - (num / (2 * den)) if den != 0 else np.nan
 
-        return p_acc_line, V_acc_node, p_acc, V_acc,
+        return e_p_line, e_v_node, p_acc_line_norm, V_acc_node_norm, p_acc, V_acc
 
     def theoretical_accuracy(self, B, epsilon):
 
