@@ -10,10 +10,13 @@ class RadialNetwork:
         self.dss_filepath = dss_filepath
 
         self.nodes = []
+        self.V0 = 0.0
         self.P = {}
         self.Q = {}
         self.children = {}
         self.parent = {}
+
+        self.build_from_dss()
 
         # Power Flow Results - Nodes
         self.V = {}
@@ -95,6 +98,8 @@ class RadialNetwork:
 
         self.nodes = list(nodes.keys())
         self.T = len(nodes[1]["P"]) # Number of Timesteps
+        self.P = {i: data["P"] for i, data in nodes.items()}
+        self.Q = {i: data["Q"] for i, data in nodes.items()}
 
         # Tree Structure
         self.children = {i: [] for i in self.nodes} # Initialize Dict
