@@ -5,7 +5,7 @@ import random
 import matplotlib.pyplot as plt
 
 from differential_privacy_ami.data_processing import load_data, process_data
-from differential_privacy_ami.power_flow import RadialNetwork
+from differential_privacy_ami.dp_power_flow import PrivateRadialNetwork
 
 EXPERIMENT_NAME = 'ieee_123bus'
 T_SET = 100 # Limit Data Timesteps
@@ -84,7 +84,7 @@ def make_network():
 
     # Load Network from Original IEEE123Bus System
     original_dss_filepath = os.path.join(destination_folderpath, 'Master.dss')
-    network = RadialNetwork(NETWORK_NAME, dss_filepath=original_dss_filepath, B=B)
+    network = PrivateRadialNetwork(NETWORK_NAME, dss_filepath=original_dss_filepath, B=B)
 
     # Create REDD Neighborhood Network
     houses = load_redd_houses()
@@ -130,7 +130,7 @@ def load_network():
     paths = get_paths()
     dss_filepath = os.path.join(paths["experiments"], EXPERIMENT_NAME, NETWORK_NAME + '.dss')
     private_dss_filepath = os.path.join(paths["experiments"], EXPERIMENT_NAME, NETWORK_NAME + '_private.dss')
-    network = RadialNetwork(NETWORK_NAME, dss_filepath=dss_filepath, private_dss_filepath=private_dss_filepath, B=B)
+    network = PrivateRadialNetwork(NETWORK_NAME, dss_filepath=dss_filepath, private_dss_filepath=private_dss_filepath, B=B)
     return network
 
 def solve_network(network, show=False):
@@ -366,7 +366,6 @@ results = solve_network(network)
 # plot_normalized_accuracy(network, results, plot_th=True, plot_ldf=True) # Validate Formulation
 # plot_normalized_accuracy(network, results, plot_th=True, plot_dss=True) # Compare Against Real Nonlinear Results
 # plot_normalized_accuracy(network, results, plot_ldf=True, plot_dss=True) # Compare Linear versus Nonlinear Results
-
 
 print('')
 
