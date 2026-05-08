@@ -340,13 +340,33 @@ def plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, pl
 make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
+
+# Individual Results Absolute Error
+# plot_absolute_error(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
+# plot_absolute_error(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
+# plot_absolute_error(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
+
+# Individual Results Normalized Accuracy
 #plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
 #plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
 #plot_normalized_accuracy(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
 
-plot_absolute_error(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
-plot_absolute_error(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
-plot_absolute_error(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
+# Comparative Results Absolute Error
+# Good - Absolute Error is Lower than Theoretical Error
+# Questionable - LDF Error is much higher than DSS Error
+# plot_absolute_error(network, results, plot_th=True, plot_ldf=True) # Validate Formulation
+# plot_absolute_error(network, results, plot_th=True, plot_dss=True) # Compare Against Real Nonlinear Results
+# plot_absolute_error(network, results, plot_ldf=True, plot_dss=True) # Compare Linear versus Nonlinear Results
+
+# Comparative Results Normalized Accuracy
+# BPA Good - Empirical Accuracy higher than Theoretical Accuracy
+# NVA Not Good - Empirical Accuracy lower than Theoretical Accuracy
+# Good - LDF BPA and DSS BPA exactly overlap.
+# Good - LDF NVA and DSS NVA Approximately overlap
+# plot_normalized_accuracy(network, results, plot_th=True, plot_ldf=True) # Validate Formulation
+# plot_normalized_accuracy(network, results, plot_th=True, plot_dss=True) # Compare Against Real Nonlinear Results
+# plot_normalized_accuracy(network, results, plot_ldf=True, plot_dss=True) # Compare Linear versus Nonlinear Results
+
 
 print('')
 
