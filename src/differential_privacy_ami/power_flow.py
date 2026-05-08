@@ -182,3 +182,39 @@ class RadialNetwork:
             f.write(f"Set number={self.T}\n")
             f.write(f"Set stepsize=3s\n") # TODO make adjustable
             f.write(f"\nSolve\n")
+
+    # Set of all nodes along path from root to node
+    def C(self, i):
+        path = []
+        current = i
+        # Walk to root using parent pointers
+        while True:
+            path.append(current)
+            if current == 0:
+                break
+            current = self.parent[current]
+        path.reverse()
+        return path
+
+    # Set of all nodes downstream of node i
+    def D(self, i):
+        stack = [i]
+        downstream = []
+        while stack:
+            node = stack.pop()
+            downstream.append(node)
+            stack.extend(self.children.get(node, []))
+        return downstream
+
+    # Set of all lines along path from root to node
+    def L(self, i):
+        path = self.C(i)
+        return [(path[k], path[k+1]) for k in range(len(path) - 1)]
+
+    def distance_to_root(self, i):
+        dist = 0
+        current = i
+        while current != 0:
+            current = self.parent[current]
+            dist += 1
+        return dist
