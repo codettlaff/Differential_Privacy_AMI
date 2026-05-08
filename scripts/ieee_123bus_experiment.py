@@ -169,6 +169,10 @@ def solve_network(network, show=False):
 
 def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False):
 
+    paths = get_paths()
+    save_folderpath = os.path.join(paths["experiments"], EXPERIMENT_NAME, 'plots')
+    if not os.path.exists(save_folderpath): os.makedirs(save_folderpath)
+
     def get_line_data(key):
         data = results[key]
         dist = np.array([network.distance_to_root(j) for (i, j),data in data.items()])
@@ -210,6 +214,11 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
     plt.ylabel('Branch Power Accuracy')
     plt.legend()
     plt.title('Branch Power Accuracy vs Distance')
+    name = ""
+    if plot_th: name += 'TH_'
+    if plot_ldf: name += 'LDF_'
+    if plot_dss: name += 'DSS'
+    plt.savefig(os.path.join(save_folderpath, f'BPA_{name}.png'))
 
     # Plot Node Voltage Accuracy
     plt.figure()
@@ -233,6 +242,11 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
     plt.ylabel("Node Voltage Accuracy")
     plt.legend()
     plt.title("Node Voltage Accuracy vs Distance")
+    name = ""
+    if plot_th: name += 'TH_'
+    if plot_ldf: name += 'LDF_'
+    if plot_dss: name += 'DSS'
+    plt.savefig(os.path.join(save_folderpath, f'NVA_{name}.png'))
 
     plt.show()
 
@@ -240,6 +254,8 @@ make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
 plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
+plot_results(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
+plot_results(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
 
 print('')
 
