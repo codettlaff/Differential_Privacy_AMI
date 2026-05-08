@@ -173,7 +173,88 @@ def solve_network(network, show=False):
         'v_acc_dss': v_acc_dss
     }
 
-def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False):
+def plot_absolute_error(network, results, plot_th=False, plot_ldf=False, plot_dss=False):
+
+    paths = get_paths()
+    save_folderpath = os.path.join(paths["experiments"], EXPERIMENT_NAME, 'plots')
+    if not os.path.exists(save_folderpath): os.makedirs(save_folderpath)
+
+    def get_line_data(key):
+        data = results[key]
+        dist = np.array([network.distance_to_root(j) for (i, j),data in data.items()])
+        vals = np.array(list(data.values()))
+        return dist, vals
+
+    def get_node_data(key):
+        data = results[key]
+        dist = np.array([network.distance_to_root(i) for i in data.keys()])
+        vals = np.array(list(data.values()))
+        return dist, vals
+
+    def plot_fit(x, y, label):
+        if len(x) < 2: return
+        coeffs = np.polyfit(x, y, 1)
+        x_fit = np.linspace(x.min(), x.max(), 100)
+        y_fit = np.polyval(coeffs, x_fit)
+        plt.plot(x_fit, y_fit, linestyle='--', label=f'{label} fit')
+
+    # Plot Branch Power Accuracy
+    if plot_th:
+        dist_line, e_p_line_th = get_line_data('e_p_line_th')
+        mask = e_p_line_th != 0
+        plt.scatter(dist_line[mask], e_p_line_th[mask], label='TH')
+        plot_fit(dist_line[mask], e_p_line_th[mask], 'TH')
+
+    if plot_ldf:
+        dist_line, e_p_line_ldf = get_line_data('e_p_line_ldf')
+        plt.scatter(dist_line, e_p_line_ldf, label='LDF')
+        plot_fit(dist_line, e_p_line_ldf, 'LDF')
+
+    if plot_dss:
+        dist_line, e_p_line_dss = get_line_data('e_p_line_dss')
+        plt.scatter(dist_line, e_p_line_dss, label='DSS')
+        plot_fit(dist_line, e_p_line_dss, 'DSS')
+
+    plt.xlabel('Distance to Root')
+    plt.ylabel('Branch Power Error')
+    plt.legend()
+    plt.title('Branch Power Error vs Distance')
+    name = ""
+    if plot_th: name += 'TH_'
+    if plot_ldf: name += 'LDF_'
+    if plot_dss: name += 'DSS'
+    plt.savefig(os.path.join(save_folderpath, f'BPE_{name}.png'))
+
+    # Plot Node Voltage Accuracy
+    plt.figure()
+    if plot_th:
+        dist_node, e_v_node_th = get_node_data('e_v_node_th')
+        plt.scatter(dist_node, e_v_node_th, label='TH')
+        plot_fit(dist_node, e_v_node_th, 'TH')
+
+    if plot_ldf:
+        dist_node, e_v_node = get_node_data('e_v_node_ldf')
+        plt.scatter(dist_node, e_v_node, label='LDF')
+        plot_fit(dist_node, e_v_node, 'LDF')
+
+    if plot_dss:
+        dist_node, e_v_node = get_node_data('e_v_node_dss')
+        plt.scatter(dist_node, e_v_node, label='DSS')
+        plot_fit(dist_node, e_v_node, 'DSS')
+
+    plt.xlabel("Distance to Root")
+    plt.ylabel("Node Voltage Error")
+    plt.legend()
+    plt.title("Node Voltage Error vs Distance")
+    name = ""
+    if plot_th: name += 'TH_'
+    if plot_ldf: name += 'LDF_'
+    if plot_dss: name += 'DSS'
+    plt.savefig(os.path.join(save_folderpath, f'NVE_{name}.png'))
+
+    plt.show()
+
+def plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, plot_dss=False):
 
     paths = get_paths()
     save_folderpath = os.path.join(paths["experiments"], EXPERIMENT_NAME, 'plots')
@@ -265,9 +346,13 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 make_network() # Only need to run this function once.
 network = load_network()
 results = solve_network(network)
-plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
-plot_results(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
-plot_results(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
+#plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
+#plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
+#plot_normalized_accuracy(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
+
+plot_absolute_error(network, results, plot_th=False, plot_ldf=False, plot_dss=True)
+plot_absolute_error(network, results, plot_th=False, plot_ldf=True, plot_dss=False)
+plot_absolute_error(network, results, plot_th=True, plot_ldf=False, plot_dss=False)
 
 print('')
 
