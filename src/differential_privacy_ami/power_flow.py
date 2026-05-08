@@ -211,6 +211,10 @@ class RadialNetwork:
         path = self.C(i)
         return [(path[k], path[k+1]) for k in range(len(path) - 1)]
 
+    # Set of all lines connected to node i
+    def M(self, i):
+        return [(u,v) for (u,v) in self.lines if u == i or v == i]
+
     def distance_to_root(self, i):
         dist = 0
         current = i
@@ -218,3 +222,43 @@ class RadialNetwork:
             current = self.parent[current]
             dist += 1
         return dist
+
+    def lin_dist_flow(self):
+
+        v_squared_drop = {} # |V_j|^2 - |V_i|^2
+
+        # Node Results
+        V = {} # Node Voltage Magnitude
+        I = {} # Node Current Injection Magnitude
+
+        # Branch Results
+        v = {} # Branch Voltage Drop Magnitude
+        i_branch = {} # Branch Current Flow Magnitude
+        p = {} # Branch Real Power Flow
+        q = {} # Branch Reactive Power Flow
+
+        for t in range(self.T):
+            for (i,j) in self.lines:
+                p_ij = sum(self.P[h][t] for h in self.D(j)) # Branch power is sum of downstream injections.
+                p[(i,j,t)] = p_ij
+                q_ij = sum(self.Q[h][t] for h in self.D(i)) # Branch power is sum of downstream injections.
+                q[(i,j,t)] = q_ij
+                r_ij = self.r[(i,j)]
+                x_ij = self.x[(i,j)]
+                v_squared_drop = - 2 * (r_ij * p_ij + x_ij * q_ij) # |V_j|^2 - |V_i|^2
+            for i in self.nodes:
+                V_squared = self.V0**2 - sum(v_squared_drop[(h,k,t)] for h,k in self.L(i)) # Squared Nodal Voltage is sum of upstream squared voltage drops
+                V[(i,t)] = np.sqrt(V_squared) # Nodal Voltage
+            for (i,j) in self.lines:
+                v[(i,j,t)] = V[(j,t)] - V[(i,t)] # Line Voltage Drops
+                i_ij = np.sqrt(p[(i,j,t)]**2 + q[(i,j,t)]**2) / V[(i,t)] # Line Current Flow
+                i_branch[(i,j,t)] = i_ij
+            for i in self.nodes:
+                I[(i,t)] = sum(i_branch[(i,j,t)] for i,j in self.M(i))
+
+        self.V = V
+        self.I = I
+        self.v = v
+        self.i = i_branch
+        self.p = p
+        self.q = q
