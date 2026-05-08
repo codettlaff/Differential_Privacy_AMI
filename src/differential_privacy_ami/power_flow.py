@@ -493,19 +493,22 @@ class RadialNetwork:
         v_acc_lower_bound = 1 - (sum(sigma_v.values()) / (2 * sum(v ** 2 for v in self.V.values())))
 
         # --- Per-line accuracy ---
-        p_acc_line = {}
+        p_acc_line_norm = {}
+        e_p_line = {}
         for (i, j) in self.lines:
             num = sum(sigma_p.get((i, j, t), 0.0) for t in range(self.T))
             den = sum(self.p.get((i, j, t), 0.0) for t in range(self.T))
             val = 1 - (num / (2 * den)) if den != 0 else 0.0
-            p_acc_line[(i, j)] = max(0.0, min(1.0, val)) # Min Accuracy below 0 means nothing
+            e_p_line[(i, j)] = num
+            p_acc_line_norm[(i, j)] = max(0.0, min(1.0, val)) # Min Accuracy below 0 means nothing
 
         # --- Per-node accuracy ---
-        v_acc_node = {}
+        v_acc_node_norm = {}
+        e_v_node = {}
         for j in self.nodes:
             num = sum(sigma_v.get((j, t), 0.0) for t in range(self.T))
             den = sum((self.V.get((j, t), 0.0)) ** 2 for t in range(self.T))
+            e_v_node[j] = num
+            v_acc_node_norm[j] = 1 - (num / (2 * den)) if den != 0 else 0.0
 
-            v_acc_node[j] = 1 - (num / (2 * den)) if den != 0 else 0.0
-
-        return p_acc_line, v_acc_node, p_acc_lower_bound, v_acc_lower_bound
+        return e_p_line, e_v_node, p_acc_line_norm, v_acc_node_norm, p_acc_lower_bound, v_acc_lower_bound

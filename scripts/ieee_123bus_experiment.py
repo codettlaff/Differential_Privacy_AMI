@@ -146,13 +146,15 @@ def solve_network(network, show=False):
     e_p_line_dss, e_v_line_dss, p_acc_line_dss, v_acc_node_dss, p_acc_dss, v_acc_dss = network.empirical_accuracy()  # Get Accuracy using difference between results.
 
     # Theoretical Accuracy, Normalized by True Dist-Flow Results
-    p_acc_line_th, v_acc_node_th, p_acc_th, v_acc_th = network.theoretical_accuracy(B, EPSILON)  # Theoretical accuracy
+    e_p_line_th, e_v_node_th, p_acc_line_th, v_acc_node_th, p_acc_th, v_acc_th = network.theoretical_accuracy(B, EPSILON)  # Theoretical accuracy
 
     if show:
         network.power_flow_results(show=True, tilde=False)
         network.power_flow_results(show=True, tilde=True)
 
     return{
+        'e_p_line_th': e_p_line_th,
+        'e_v_node_th': e_v_node_th,
         'p_acc_line_th': p_acc_line_th,
         'v_acc_node_th': v_acc_node_th,
         'p_acc_th': p_acc_th,
@@ -200,6 +202,7 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 
     if plot_th:
         dist_line, p_acc_th = get_line_data('p_acc_line_th')
+        dist_line, e_p_line_th = get_line_data('e_p_line_th')
         mask = p_acc_th != 0
         plt.scatter(dist_line[mask], p_acc_th[mask], label='TH')
         plot_fit(dist_line[mask], p_acc_th[mask], 'TH')
@@ -231,6 +234,7 @@ def plot_results(network, results, plot_th=False, plot_ldf=False, plot_dss=False
 
     if plot_th:
         dist_node, v_acc_th = get_node_data('v_acc_node_th')
+        dist_node, e_v_node_th = get_node_data('e_v_node_th')
         plt.scatter(dist_node, v_acc_th, label='TH')
         plot_fit(dist_node, v_acc_th, 'TH')
 
