@@ -283,20 +283,17 @@ def plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, pl
 
     if plot_th:
         dist_line, p_acc_th = get_line_data('p_acc_line_th')
-        dist_line, e_p_line_th = get_line_data('e_p_line_th')
         mask = p_acc_th != 0
         plt.scatter(dist_line[mask], p_acc_th[mask], label='TH')
         plot_fit(dist_line[mask], p_acc_th[mask], 'TH')
 
     if plot_ldf:
         dist_line, p_acc_ldf = get_line_data('p_acc_line_ldf')
-        dist_line, e_p_line = get_line_data('e_p_line_ldf')
         plt.scatter(dist_line, p_acc_ldf, label='LDF')
         plot_fit(dist_line, p_acc_ldf, 'LDF')
 
     if plot_dss:
         dist_line, p_acc_dss = get_line_data('p_acc_line_dss')
-        dist_line, e_p_line_dss = get_line_data('e_p_line_dss')
         plt.scatter(dist_line, p_acc_dss, label='DSS')
         plot_fit(dist_line, p_acc_dss, 'DSS')
 
@@ -315,19 +312,16 @@ def plot_normalized_accuracy(network, results, plot_th=False, plot_ldf=False, pl
 
     if plot_th:
         dist_node, v_acc_th = get_node_data('v_acc_node_th')
-        dist_node, e_v_node_th = get_node_data('e_v_node_th')
         plt.scatter(dist_node, v_acc_th, label='TH')
         plot_fit(dist_node, v_acc_th, 'TH')
 
     if plot_ldf:
         dist_node, v_acc_ldf = get_node_data('v_acc_node_ldf')
-        dist_node, e_v_node = get_node_data('e_v_node_ldf')
         plt.scatter(dist_node, v_acc_ldf, label='LDF')
         plot_fit(dist_node, v_acc_ldf, 'LDF')
 
     if plot_dss:
         dist_node, v_acc_dss = get_node_data('v_acc_node_dss')
-        dist_node, e_v_node = get_node_data('e_v_node_dss')
         plt.scatter(dist_node, v_acc_dss, label='DSS')
         plot_fit(dist_node, v_acc_dss, 'DSS')
 
