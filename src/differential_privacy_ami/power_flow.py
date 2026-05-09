@@ -72,7 +72,8 @@ class RadialNetwork:
             dss.LoadShape.Name(shape_name)
 
             kw = [peak_kw * s for s in dss.LoadShape.PMult()]
-            kvar = [peak_kvar * s for s in dss.LoadShape.QMult()] # TODO: Fix this in other class as well
+            Qmult = dss.LoadShape.QMult() if dss.LoadShape.QMult() != [0.0] else dss.LoadShape.PMult()
+            kvar = [peak_kvar * s for s in Qmult] # TODO: Fix this in other class as well
 
             for t in range(T):
                 nodes[i]["P"] = [p * 1e3 for p in kw] # kW to W
