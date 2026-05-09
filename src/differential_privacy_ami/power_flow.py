@@ -268,3 +268,44 @@ class RadialNetwork:
         self.i = i_branch
         self.p = p
         self.q = q
+
+    def solve_dss(self):
+
+        # Node Results
+        V = {}
+        I = {}
+
+        # Branch Results
+        v = {}
+        i = {}
+        p = {}
+        q = {}
+
+        self.export_to_dss()
+
+        # Compile
+        dss.Text.Command("Clear")
+        dss.Text.Command(f"Compile [{self.dss_filepath}]")
+
+        # Root Node Monitor
+        (i,j) = self.lines[0]
+        dss.Text.Command(
+            f"New Monitor.V_root element=Line.L_{i}_{j} mode=0 terminal=1" # Current Voltage Mode From Bus
+        )
+
+        # Add Monitors
+        for (i,j) in self.lines:
+            dss.Text.Command(
+                f"New Monitor.V_root element=Line.L_{i}_{j} mode=1 terminal=2" # Power Mode To Bus
+            )
+            dss.Text.Command(
+                f"New Monitor.V_{i}_{j} element=Line.L_{i}_{j} mode=0 terminal=2" # Voltage Current Mode To Bus
+            )
+
+        dss.Text.Command("Solve")
+
+        # Root Node Monitor Data
+        dss.Monitors.Name("V_root")
+        v_data = dss.Monitors.Channel(1)
+        for t, V in enumerate(v_data):
+            V[(0,t)] = V
