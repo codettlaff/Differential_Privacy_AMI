@@ -251,7 +251,7 @@ class RadialNetwork:
                 q[(i,j,t)] = q_ij
                 r_ij = self.r[(i,j)]
                 x_ij = self.x[(i,j)]
-                v_squared_drop = - 2 * (r_ij * p_ij + x_ij * q_ij) # |V_j|^2 - |V_i|^2
+                v_squared_drop[(i,j,t)] = - 2 * (r_ij * p_ij + x_ij * q_ij) # |V_j|^2 - |V_i|^2
             for i in self.nodes:
                 V_squared = self.V0**2 - sum(v_squared_drop[(h,k,t)] for h,k in self.L(i)) # Squared Nodal Voltage is sum of upstream squared voltage drops
                 V[(i,t)] = np.sqrt(V_squared) # Nodal Voltage
