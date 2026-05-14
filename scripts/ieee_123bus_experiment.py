@@ -43,6 +43,7 @@ make_network()
 network = load_network()
 #network.lin_dist_flow()
 network.solve_dss()
+network.power_flow_results(show=True)
 
 print('')
 
