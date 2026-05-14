@@ -354,14 +354,6 @@ class RadialNetwork:
         V_data = dss.Monitors.Channel(1) # Phase 1 Voltage Magnitude
         V[0] = V_data
 
-        #i_data = dss.Monitors.Channel(7)  # Phase 1 Current Magnitude
-        #i_flow[0] = i_data
-        #dss.Monitors.Name("P_root")
-        #p_data = dss.Monitors.Channel(1)
-        #p[0] = p_data
-        #q_data = dss.Monitors.Channel(2)
-        #q[0] = q_data
-
         # Monitor Data
         for (i,j) in self.lines:
 
