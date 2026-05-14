@@ -41,9 +41,10 @@ def load_network():
 
 make_network()
 network = load_network()
-#network.lin_dist_flow()
+network.lin_dist_flow()
+ldf_node_results, ldf_edge_results  = network.power_flow_results(return_results=True)
 network.solve_dss()
-network.power_flow_results(show=True)
+dss_node_results, dss_edge_results = network.power_flow_results(return_results=True)
 
 print('')
 

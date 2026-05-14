@@ -261,12 +261,58 @@ class RadialNetwork:
             for i in self.nodes:
                 I[(i,t)] = sum(i_branch[(i,j,t)] for i,j in self.M(i))
 
-        self.V = V
+        V_formatted = {}
+        for (i, t), value in V.items():
+            if i not in V_formatted:
+                V_formatted[i] = []
+            V_formatted[i].append(value)
+
+        # convert lists to numpy arrays
+        for i in V_formatted:
+            V_formatted[i] = np.array(V_formatted[i])
+
+        v_formatted = {}
+        for (i,j,t), value in v.items():
+            if (i,j) not in v_formatted:
+                v_formatted[(i,j)] = []
+            v_formatted[(i,j)].append(value)
+
+        for (i,j) in v_formatted:
+            v_formatted[(i,j)] = np.array(v_formatted[(i,j)])
+
+        i_formatted = {}
+        for (i, j, t), value in i_branch.items():
+            if i not in i_formatted:
+                i_formatted[(i,j)] = []
+            i_formatted[(i,j)].append(value)
+
+        for (i,j) in i_formatted:
+            i_formatted[(i,j)] = np.array(i_formatted[(i,j)])
+
+        p_formatted = {}
+        for (i,j,t), value in p.items():
+            if (i,j) not in p_formatted:
+                p_formatted[(i,j)] = []
+            p_formatted[(i,j)].append(value)
+
+        for (i,j) in p_formatted:
+            p_formatted[(i,j)] = np.array(p_formatted[(i,j)])
+
+        q_formatted = {}
+        for (i,j,t), value in q.items():
+            if (i,j) not in q_formatted:
+                q_formatted[(i,j)] = []
+            q_formatted[(i,j)].append(value)
+
+        for (i,j) in q_formatted:
+            q_formatted[(i,j)] = np.array(q_formatted[(i,j)])
+
+        self.V = V_formatted
         self.I = I
-        self.v = v
-        self.i = i_branch
-        self.p = p
-        self.q = q
+        self.v = v_formatted
+        self.i = i_formatted
+        self.p = p_formatted
+        self.q = q_formatted
 
     def solve_dss(self):
 
