@@ -236,7 +236,6 @@ class RadialNetwork:
 
         # Node Results
         V = {} # Node Voltage Magnitude
-        I = {} # Node Current Injection Magnitude
 
         # Branch Results
         v = {} # Branch Voltage Drop Magnitude
@@ -260,8 +259,6 @@ class RadialNetwork:
                 v[(i,j,t)] = V[(j,t)] - V[(i,t)] # Line Voltage Drops
                 i_ij = np.sqrt(p[(i,j,t)]**2 + q[(i,j,t)]**2) / V[(i,t)] # Line Current Flow
                 i_branch[(i,j,t)] = i_ij
-            for i in self.nodes:
-                I[(i,t)] = sum(i_branch[(i,j,t)] for i,j in self.M(i))
 
         V_formatted = {}
         for (i, t), value in V.items():
@@ -310,7 +307,6 @@ class RadialNetwork:
             q_formatted[(i,j)] = np.array(q_formatted[(i,j)])
 
         self.V = V_formatted
-        self.I = I
         self.v = v_formatted
         self.i = i_formatted
         self.p = p_formatted
