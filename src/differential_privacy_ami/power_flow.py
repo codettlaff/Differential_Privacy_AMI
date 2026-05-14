@@ -273,11 +273,10 @@ class RadialNetwork:
 
         # Node Results
         V = {}
-        I = {}
 
         # Branch Results
         v = {}
-        i = {}
+        i_flow = {}
         p = {}
         q = {}
 
@@ -292,11 +291,14 @@ class RadialNetwork:
         dss.Text.Command(
             f"New Monitor.V_root element=Line.L_{i}_{j} mode=0 terminal=1" # Current Voltage Mode From Bus
         )
+        dss.Text.Command(
+            f"New Monitor.P_root element=Line.L_{i}_{j} mode=1 terminal=1" # Power Mode From Bus
+        )
 
         # Add Monitors
         for (i,j) in self.lines:
             dss.Text.Command(
-                f"New Monitor.V_root element=Line.L_{i}_{j} mode=1 terminal=2" # Power Mode To Bus
+                f"New Monitor.P_{i}_{j} element=Line.L_{i}_{j} mode=1 terminal=2" # Power Mode To Bus
             )
             dss.Text.Command(
                 f"New Monitor.V_{i}_{j} element=Line.L_{i}_{j} mode=0 terminal=2" # Voltage Current Mode To Bus
@@ -306,6 +308,29 @@ class RadialNetwork:
 
         # Root Node Monitor Data
         dss.Monitors.Name("V_root")
-        v_data = dss.Monitors.Channel(1)
-        for t, V in enumerate(v_data):
-            V[(0,t)] = V
+        v_data = dss.Monitors.Channel(1) # Phase 1 Voltage Magnitude
+        v[0] = v_data
+        i_data = dss.Monitors.Channel(7)  # Phase 1 Current Magnitude
+        i_flow[0] = i_data
+        dss.Monitors.Name("P_root")
+        p_data = dss.Monitors.Channel(1)
+        p[0] = p_data
+        q_data = dss.Monitors.Channel(2)
+        q[0] = q_data
+
+        # Monitor Data
+        for (i,j) in self.lines:
+
+            dss.Monitors.Name(f"V_{i}_{j}")
+            v_data = dss.Monitors.Channel(1)
+            v[j] = v_data
+            i_data = dss.Monitors.Channel(7)
+            i_flow[j] = i_data
+
+            dss.Monitors.Name(f"P_{i}_{j}")
+            p_data = dss.Monitors.Channel(1)
+            p[j] = p_data
+            q_data = dss.Monitors.Channel(2)
+            q[j] = q_data
+
+        print('')

@@ -41,7 +41,8 @@ def load_network():
 
 make_network()
 network = load_network()
-network.lin_dist_flow()
+#network.lin_dist_flow()
+network.solve_dss()
 
 print('')
 
