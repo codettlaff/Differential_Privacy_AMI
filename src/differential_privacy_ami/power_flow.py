@@ -20,7 +20,6 @@ class RadialNetwork:
 
         # Power Flow Results - Nodes
         self.V = {}
-        self.I = {}
 
         # Power Flow Results - Branches
         self.p = {}
@@ -308,8 +307,8 @@ class RadialNetwork:
 
         # Root Node Monitor Data
         dss.Monitors.Name("V_root")
-        v_data = dss.Monitors.Channel(1) # Phase 1 Voltage Magnitude
-        v[0] = v_data
+        V_data = dss.Monitors.Channel(1) # Phase 1 Voltage Magnitude
+        V[0] = V_data
         i_data = dss.Monitors.Channel(7)  # Phase 1 Current Magnitude
         i_flow[0] = i_data
         dss.Monitors.Name("P_root")
@@ -322,8 +321,8 @@ class RadialNetwork:
         for (i,j) in self.lines:
 
             dss.Monitors.Name(f"V_{i}_{j}")
-            v_data = dss.Monitors.Channel(1)
-            v[j] = v_data
+            V_data = dss.Monitors.Channel(1)
+            V[j] = V_data
             i_data = dss.Monitors.Channel(7)
             i_flow[j] = i_data
 
@@ -332,5 +331,14 @@ class RadialNetwork:
             p[j] = p_data
             q_data = dss.Monitors.Channel(2)
             q[j] = q_data
+
+        for (i,j) in self.lines:
+            v[(i,j)] = V[i] - V[j]
+
+        self.V = V
+        self.v = v
+        self.i = i_flow
+        self.p = p
+        self.q = q
 
         print('')
