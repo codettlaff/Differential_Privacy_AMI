@@ -3,7 +3,7 @@ import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 
-from differential_privacy_ami.power_flow_3ph import RadialNetwork
+from differential_privacy_ami.power_flow import RadialNetwork
 
 EXPERIMENT_NAME = 'ieee_123bus'
 NETWORK_NAME = 'ieee_123bus'
@@ -42,7 +42,7 @@ def load_network():
 make_network()
 network = load_network()
 #network.lin_dist_flow()
-#network.solve_dss()
+network.solve_dss()
 
 print('')
 
