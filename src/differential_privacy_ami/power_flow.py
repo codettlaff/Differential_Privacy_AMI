@@ -375,9 +375,9 @@ class RadialNetwork:
 
             dss.Monitors.Name(f"P_{i}_{j}")
             p_data = dss.Monitors.Channel(1)
-            p[(i,j)] = p_data
+            p[(i,j)] = p_data * 1e3 # kW -> W
             q_data = dss.Monitors.Channel(2)
-            q[(i,j)] = - q_data
+            q[(i,j)] = - q_data * 1e3  # kW -> W
 
         for (i,j) in self.lines:
             v[(i,j)] = V[i] - V[j]
@@ -436,12 +436,6 @@ class RadialNetwork:
         if return_results: return df_nodes, df_lines
 
     def compute_error(self, node_results_1, node_results_2, line_results_1, line_results_2):
-        def rmse(a, b):
-            return np.sqrt(np.mean((a - b) ** 2))
-
-        # Numerator - Error Magnitude ||a - b||
-        # Denominator - Error + Signal Magnitude ||a - b|| + ||b||
-        # Ranges between 0 (perfect match) and 1 (error dominated the signal)
         def bounded_error(a, b):
             return np.linalg.norm(a - b) / (np.linalg.norm(a - b) + np.linalg.norm(b))
 
