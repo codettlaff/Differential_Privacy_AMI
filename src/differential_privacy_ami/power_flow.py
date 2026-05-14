@@ -449,4 +449,4 @@ class RadialNetwork:
             if key in line_results_2.keys():
                 line_errors[key] = bounded_error(line_results_1[key], line_results_2[key])
 
-        print('')
+        return node_errors, line_errors

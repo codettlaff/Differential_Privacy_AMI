@@ -42,11 +42,27 @@ def load_network():
 make_network()
 network = load_network()
 network.lin_dist_flow()
-ldf_node_results, ldf_edge_results  = network.power_flow_results(return_results=True, show=True)
+ldf_node_results, ldf_edge_results  = network.power_flow_results(return_results=True, show=False)
 network.solve_dss()
-dss_node_results, dss_edge_results = network.power_flow_results(return_results=True, show=True)
+dss_node_results, dss_edge_results = network.power_flow_results(return_results=True, show=False)
+node_errors, line_errors = network.compute_error(ldf_node_results, dss_node_results, ldf_edge_results, dss_edge_results)
 
-network.compute_error(ldf_node_results, dss_node_results, ldf_edge_results, dss_edge_results)
+# Try Modifying System to get Lin-Dist-Flow to more closely match Dist-Flow
+# Scale down all Loads (P and Q)
+# Decrease R and X (Smaller Voltage Drops - Linear Approximatation Holds)
+scale = 0.01
+for node in network.P:
+    network.P[node] = [scale * val for val in network.P[node]]
+    network.Q[node] = [scale * val for val in network.Q[node]]
+for key in network.r:
+    network.r[key] *= scale
+    network.x[key] *= scale
+
+network.lin_dist_flow()
+ldf_node_results, ldf_edge_results  = network.power_flow_results(return_results=True, show=False)
+network.solve_dss()
+dss_node_results, dss_edge_results = network.power_flow_results(return_results=True, show=False)
+node_errors_2, line_errors_2 = network.compute_error(ldf_node_results, dss_node_results, ldf_edge_results, dss_edge_results)
 
 print('')
 
