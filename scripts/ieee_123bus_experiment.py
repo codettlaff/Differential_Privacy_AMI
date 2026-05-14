@@ -46,5 +46,7 @@ ldf_node_results, ldf_edge_results  = network.power_flow_results(return_results=
 network.solve_dss()
 dss_node_results, dss_edge_results = network.power_flow_results(return_results=True)
 
+network.compute_error(ldf_node_results, dss_node_results, ldf_edge_results, dss_edge_results)
+
 print('')
 

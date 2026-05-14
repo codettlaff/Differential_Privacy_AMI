@@ -434,3 +434,25 @@ class RadialNetwork:
             df_lines.to_csv(lines_csv_filepath, index=False)
 
         if return_results: return df_nodes, df_lines
+
+    def compute_error(self, node_results_1, node_results_2, line_results_1, line_results_2):
+        def rmse(a, b):
+            return np.sqrt(np.mean((a - b) ** 2))
+
+        # Numerator - Error Magnitude ||a - b||
+        # Denominator - Error + Signal Magnitude ||a - b|| + ||b||
+        # Ranges between 0 (perfect match) and 1 (error dominated the signal)
+        def bounded_error(a, b):
+            return np.linalg.norm(a - b) / (np.linalg.norm(a - b) + np.linalg.norm(b))
+
+        node_errors = {}
+        for key in node_results_1.keys():
+            if key in node_results_2.keys():
+                node_errors[key] = bounded_error(node_results_1[key], node_results_2[key])
+
+        line_errors = {}
+        for key in line_results_1.keys():
+            if key in line_results_2.keys():
+                line_errors[key] = bounded_error(line_results_1[key], line_results_2[key])
+
+        print('')
