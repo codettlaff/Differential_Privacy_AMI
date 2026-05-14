@@ -51,7 +51,9 @@ class RadialNetwork:
             if shape_name:
                 dss.LoadShape.Name(shape_name)
                 T = dss.LoadShape.Npts()
+                interval = dss.LoadShape.SInterval() # Interval in Seconds
         self.T = T
+        self.interval = interval # Interval in Seconds
 
         # Initialize nodes with zero time-series
         nodes = {
@@ -160,7 +162,7 @@ class RadialNetwork:
                 f.write(
                     f"New LoadShape.LS_{i} "
                     f"npts={self.T} "
-                    f"interval=0.000833 " # 3s time resolution TODO: Make this flexible
+                    f"interval={str(self.interval)} " 
                     f"Pmult=({P_mult_str})\n"
                     f"Qmult=({Q_mult_str})\n"
                 )
@@ -185,7 +187,7 @@ class RadialNetwork:
             # Simulation Setup
             f.write(f"Set mode=Daily\n")
             f.write(f"Set number={self.T}\n")
-            f.write(f"Set stepsize=3s\n") # TODO make adjustable
+            f.write(f"Set stepsize={str(self.interval)}\n")
             f.write(f"\nSolve\n")
 
     # Set of all nodes along path from root to node
