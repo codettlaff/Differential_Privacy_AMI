@@ -120,6 +120,83 @@ class RadialNetwork:
             self.x[(i, j)] = x_ij
 
     def export_to_dss(self):
+        with open(self.dss_filepath, "w") as f:
+            # Circuit Definition
+            f.write("Clear\n")
+            f.write(f"New Circuit.{self.name} basekv={self.V0/1e3} pu=1.0\n")
+            f.write("\n")
+            # Lines
+            for (i, j) in self.lines:
+                r = self.r[(i, j)]
+                x = self.x[(i, j)]
+                f.write(
+                    f"New Line.L_{i}_{j} "
+                    f"bus1=bus{i} bus2=bus{j} "
+                    f"r1={r} x1={x} r0={r} x0={x}" # TODO: Is this correct, or should zero-sequence impedance be zero?
+                    f"length=1 units=km\n"
+                )
+            f.write("\n")
+
+            load_kw = {}
+            load_kvar = {}
+
+            # Cache Unique Load-Shapes
+            shape_map = {}
+            shape_counter = 0
+            node_to_shape = {}
+
+            # Load-Shapes
+            for i in self.nodes:
+                if i == 0: continue
+                max_p = np.max(self.P[i])
+                max_q = np.max(self.Q[i])
+                load_kw[i] = max_p / 1e3
+                load_kvar[i] = max_q / 1e3
+                P_series_scaled = self.P[i] / max_p if max_p != 0 else np.zeros_like(self.P[i])
+                Q_series_scaled = self.Q[i] / max_q if max_q != 0 else np.zeros_like(self.Q[i])
+                key = (
+                    tuple(np.round(P_series_scaled, 6)),
+                    tuple(np.round(Q_series_scaled, 6))
+                )
+                if key not in shape_map:
+                    shape_name = f"LS_{shape_counter}"
+                    shape_map[key] = shape_name
+                    shape_counter += 1
+                    P_mult_str = " ".join(str(p) for p in P_series_scaled)
+                    Q_mult_str = " ".join(str(q) for q in Q_series_scaled)
+                    f.write(
+                        f"New LoadShape.{shape_name} "
+                        f"npts={self.T} "
+                        f"interval={self.interval} "
+                        f"Pmult=({P_mult_str})\n"
+                        f"Qmult=({Q_mult_str})\n"
+                    )
+                else: shape_name = shape_map[key]
+                node_to_shape[i] = shape_name
+            f.write("\n")
+
+            # Loads
+            for i in self.nodes:
+                if i == 0: continue
+                f.write(
+                    f"New Load.Load_{i} "
+                    f"bus1=bus{i} "
+                    f"phases=1 "
+                    f"conn-wye "
+                    f"model=1 "
+                    f"kV={self.V0/1e3} "
+                    f"kW={load_kw[i]} "
+                    f"kVar={load_kvar[i]} "
+                    f"Daily={node_to_shape[i]}\n"
+                )
+            f.write("\n")
+
+            # Simulation Setup
+            f.write("Set mode=Daily\n")
+            f.write(f"Set number={self.T}\n")
+            f.write(f"Set stepsize={self.interval}\n")
+
+    def export_to_dss_old(self):
 
         with open(self.dss_filepath, 'w') as f:
 

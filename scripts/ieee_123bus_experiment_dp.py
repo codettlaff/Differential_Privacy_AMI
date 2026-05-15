@@ -11,9 +11,10 @@ save_folderpath = os.path.join(os.path.dirname(__file__), '..', 'experiments', N
 redd_folderpath = os.path.join(os.path.dirname(__file__), '..', 'data', 'redd')
 
 network = PrivateRadialNetwork(NETWORK_NAME, dss_filepath=ieee_123_filepath, save_folderpath=save_folderpath, epsilon=EPSILON, appliance_power_bound=APPLIANCE_POWER_BOUND)
-network.write_privacy_params()
 
 houses = network.load_redd_houses(redd_folderpath)
 network.make_private_neighborhood(houses)
+network.export_to_dss()
+network.write_privacy_params()
 
 print('')
