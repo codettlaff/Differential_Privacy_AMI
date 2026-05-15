@@ -299,6 +299,15 @@ class RadialNetwork:
     def M(self, i):
         return [(u,v) for (u,v) in self.lines if u == i or v == i]
 
+    def distance_to_root(self, i):
+        """Returns number of edges from node i to root (node 0)."""
+        dist = 0
+        current = i
+        while current != 0:
+            current = self.parent[current]
+            dist += 1
+        return dist
+
     def lin_dist_flow(self):
 
         v_squared_drop = {} # |V_j|^2 - |V_i|^2

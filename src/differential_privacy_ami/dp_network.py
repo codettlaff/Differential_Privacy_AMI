@@ -71,19 +71,19 @@ class PrivateRadialNetwork(RadialNetwork):
 
     # Set of all nodes along the path from root to node i.
     def C(self, i):
-        super().C(i)
+        return super().C(i)
 
     # Set of all nodes downstream of node i.
     def D(self, i):
-        super().D(i)
+        return super().D(i)
 
     # Set of all lines along the path from root to node i.
     def L(self, i):
-        super().L(i)
+        return super().L(i)
 
     # Set of all lines connected to node i.
     def M(self, i):
-        super().M(i)
+        return super().M(i)
 
     def lin_dist_flow(self):
         super().lin_dist_flow()
@@ -92,7 +92,8 @@ class PrivateRadialNetwork(RadialNetwork):
         super().solve_dss()
 
     def power_flow_results(self, t=0, return_results=False, show=False, csv_folderpath=None):
-        super().power_flow_results(t, return_results, show, csv_folderpath)
+        if return_results: return super().power_flow_results(t, return_results, show, csv_folderpath)
+        else: super().power_flow_results(t, return_results, show, csv_folderpath)
 
     def make_private_load_profile(self, load_profile, num_houses):
         b = 2 * self.B / self.epsilon
