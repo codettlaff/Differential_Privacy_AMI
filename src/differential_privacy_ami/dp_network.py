@@ -95,6 +95,9 @@ class PrivateRadialNetwork(RadialNetwork):
         if return_results: return super().power_flow_results(t, return_results, show, csv_folderpath)
         else: super().power_flow_results(t, return_results, show, csv_folderpath)
 
+    def compute_error(self, node_results_1, node_results_2, line_results_1, line_results_2):
+        return super().compute_error(node_results_1, node_results_2, line_results_1, line_results_2)
+
     def make_private_load_profile(self, load_profile, num_houses):
         b = 2 * self.B / self.epsilon
         noise = np.random.laplace(0, b, size=(num_houses, len(load_profile)))

@@ -442,18 +442,18 @@ class RadialNetwork:
             V_data = dss.Monitors.Channel(1)
             V[j] = V_data
             i_data = dss.Monitors.Channel(3)
-            i_flow[(i,j)] = i_data
+            i_flow[(i,j)] = i_data * 1e3 #  TODO: This unit conversion is also unexplained.
 
             dss.Monitors.Name(f"P_{i}_{j}")
             s_data = dss.Monitors.Channel(1)
             theta_data = dss.Monitors.Channel(2)
             p_data = s_data * np.cos(theta_data) # elementwise for two np 1d arrays
             q_data = s_data * np.sin(theta_data)
-            p[(i,j)] = - p_data * 1e3 # kW -> W
-            q[(i,j)] = - q_data * 1e3  # kW -> W
+            p[(i,j)] = - p_data * 1e6 # kW -> W # TODO: unit conversion is wrong. DSS shouldn't be providing in MW
+            q[(i,j)] = - q_data * 1e6  # kW -> W
 
         for (i,j) in self.lines:
-            v[(i,j)] = V[i] - V[j]
+            v[(i,j)] = V[i] - V[j] * 1e3 # TODO: This unit conversion is also unexplained.
 
         self.V = V
         self.v = v
