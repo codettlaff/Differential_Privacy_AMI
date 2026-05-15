@@ -1,4 +1,4 @@
-import networkx.algorithms.minors.contraction
+import shutil
 import numpy as np
 import random
 import os
@@ -68,6 +68,7 @@ class PrivateRadialNetwork(RadialNetwork):
 
     def export_to_dss(self):
         super().export_to_dss()
+        if hasattr(self, 'epsilon') and hasattr(self, 'B'): self.write_privacy_params()
 
     # Set of all nodes along the path from root to node i.
     def C(self, i):
@@ -139,7 +140,7 @@ class PrivateRadialNetwork(RadialNetwork):
 
         return num_houses, load_profile
 
-    def make_private_neighborhood(self, houses):
+    def make_private_neighborhood_loads(self, houses):
 
         P_loads_original = self.P
         Q_loads_original = self.Q
@@ -163,7 +164,4 @@ class PrivateRadialNetwork(RadialNetwork):
             P_loads_tilde[node] = self.make_private_load_profile(load_profile, n_houses)
             Q_loads_tilde[node] = P_loads_tilde[node] * ratio
 
-        self.P = P_loads
-        self.Q = Q_loads
-        self.P_tilde = P_loads_tilde
-        self.Q_tilde = Q_loads_tilde
+        return P_loads, Q_loads, P_loads_tilde, Q_loads_tilde

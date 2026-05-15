@@ -123,7 +123,7 @@ class RadialNetwork:
         with open(self.dss_filepath, "w") as f:
             # Circuit Definition
             f.write("Clear\n")
-            f.write(f"New Circuit.{self.name} basekv={self.V0/1e3} pu=1.0\n")
+            f.write(f"New Circuit.{self.name} basekv={(self.V0/1e3)*np.sqrt(3)} pu=1.0\n")
             f.write(f"Edit Vsource.Source bus1=bus0\n")  # Make sure root node is index 0.
             f.write("\n")
             # Lines
@@ -186,7 +186,7 @@ class RadialNetwork:
                     f"phases=1 "
                     f"conn-wye "
                     f"model=1 "
-                    f"kV={self.V0/1e3} "
+                    f"kV={(self.V0/1e3)*np.sqrt(3)} "
                     f"kW={load_kw[i]} "
                     f"kVar={load_kvar[i]} "
                     f"Daily={node_to_shape[i]}\n"
