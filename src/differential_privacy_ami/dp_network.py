@@ -132,7 +132,7 @@ class PrivateRadialNetwork(RadialNetwork):
                 break
             else:
                 num_houses += 1
-                load_profile += houses[i]
+                load_profile += houses[i][:n]
 
         return num_houses, load_profile
 
@@ -152,7 +152,7 @@ class PrivateRadialNetwork(RadialNetwork):
             Q_max = np.max(Q_loads_original[node])
             ratio = 0.0 if np.isclose(P_max, 0.0) else Q_max / P_max
             # Regular Neighborhood
-            n_houses, load_profile = self.assign_houses_to_load(houses, ratio)
+            n_houses, load_profile = self.assign_houses_to_load(houses, P_max)
             n_houses_list.append(n_houses)
             P_loads[node] = load_profile
             Q_loads[node] = load_profile * ratio
