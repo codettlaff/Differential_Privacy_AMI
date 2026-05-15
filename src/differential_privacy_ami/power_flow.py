@@ -373,18 +373,18 @@ class RadialNetwork:
             V_data = dss.Monitors.Channel(1)
             V[j] = V_data
             i_data = dss.Monitors.Channel(3)
-            i_flow[(i,j)] = i_data * 1e3 # kA -> W
+            i_flow[(i,j)] = i_data
 
             dss.Monitors.Name(f"P_{i}_{j}")
             s_data = dss.Monitors.Channel(1)
             theta_data = dss.Monitors.Channel(2)
             p_data = s_data * np.cos(theta_data) # elementwise for two np 1d arrays
             q_data = s_data * np.sin(theta_data)
-            p[(i,j)] = - p_data * 1e6 # MW -> W
-            q[(i,j)] = - q_data * 1e6 # MW -> W
+            p[(i,j)] = p_data * 1e3
+            q[(i,j)] = q_data * 1e3
 
         for (i,j) in self.lines:
-            v[(i,j)] = (V[i] - V[j]) * 1e3 # kV -> V
+            v[(i,j)] = (V[i] - V[j])
 
         self.V = V
         self.v = v

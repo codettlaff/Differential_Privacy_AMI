@@ -35,7 +35,7 @@ def make_redd_neighboorhood_network(ieee_123_filepath, save_folderpath, redd_fol
     redd_neighborhood_private.Q = Q_loads_tilde
     redd_neighborhood_private.export_to_dss()
 
-make_redd_neighboorhood_network(ieee_123_filepath, save_folderpath, redd_folderpath)
+# make_redd_neighboorhood_network(ieee_123_filepath, save_folderpath, redd_folderpath)
 
 redd_neighborhood_dss_filepath = os.path.join(save_folderpath, NETWORK_NAME + '.dss')
 redd_neighborhood_private_dss_filepath = os.path.join(save_folderpath, NETWORK_NAME + '_private.dss')
@@ -44,9 +44,9 @@ redd_neighborhood = PrivateRadialNetwork(NETWORK_NAME, dss_filepath=redd_neighbo
 redd_neighborhood_private = PrivateRadialNetwork(NETWORK_NAME, dss_filepath=redd_neighborhood_private_dss_filepath, save_folderpath=save_folderpath, epsilon=EPSILON, appliance_power_bound=APPLIANCE_POWER_BOUND)
 
 redd_neighborhood.solve_dss()
-node_results, line_results = redd_neighborhood.power_flow_results(return_results=True)
+node_results, line_results = redd_neighborhood.power_flow_results(show=True, return_results=True)
 redd_neighborhood_private.solve_dss()
-node_results_private, line_results_private = redd_neighborhood_private.power_flow_results(return_results=True)
+node_results_private, line_results_private = redd_neighborhood_private.power_flow_results(show=True, return_results=True)
 
 error = redd_neighborhood_private.compute_error(node_results, node_results_private, line_results, line_results_private)
 
