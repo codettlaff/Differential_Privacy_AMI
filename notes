@@ -1,26 +1,18 @@
 
-# Root Node Voltage Current Monitor
-# Channel 1: 4155.385
-# Channel 2: -0.0190601
-# Channel 3: 4156.6187
-# Channel 4: -120.00049
-# Channel 5: 4156.793
-# Channel 6: 119.99872
-# Channel 7: 76.48216
-# Channel 8: -27.542244
-# Channel 9: 2.2184463
+# Line 1 Voltage Current Monitor (Single Phase)
+Channel 1: 1386.6686
+Channel 2: -2.227923e-05
+Channel 3: 0.73482895
+Channel 4: -90.003136
 
-# Voltage Magnitude (3-Phase): Channels 1, 3, 5
-# Voltage Angles (3-Phase): Channels 2, 4, 6
-# Current Magnitudes (3-Phase): Channels 7, 8, 9
+Channel 1 - Voltage Magnitude
+Channel 2 - Voltage Angle
+Channel 3 - Current Magnitude
+Channel 4 - Current Angle
 
-# Root Node Power Reactive Power Monitor
-# Channel 1: 317.8128
-# Channel 2: 27.523184
-# Channel 3: 9.221235
-# Channel 4: -90.017235
-# Channel 5: 9.229917
-# Channel 6: -89.94819
+# Line 1 power Monitor (Single Phase)
+Channel 1: 1.0189643
+Channel 2: 90.0013
 
-# Real Power Magnitude: Channel 1, 3, 5
-# Reactive Power Magnitude: Channel 2, 4, 6
+Channel 1 - Apparent Power Magnitude
+Channel 2 - Power Angle
