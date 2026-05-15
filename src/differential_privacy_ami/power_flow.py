@@ -169,7 +169,7 @@ class RadialNetwork:
                     f.write(
                         f"New LoadShape.{shape_name} "
                         f"npts={self.T} "
-                        f"interval={self.interval} "
+                        f"Sinterval={self.interval} "
                         f"Pmult=({P_mult_str})\n"
                         f"Qmult=({Q_mult_str})\n"
                     )
