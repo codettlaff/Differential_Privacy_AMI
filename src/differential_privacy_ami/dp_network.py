@@ -1,26 +1,25 @@
+import networkx.algorithms.minors.contraction
 import numpy as np
+import random
 import os
-from power_flow import RadialNetwork
+
+from .data_processing import load_data, process_data
+from .power_flow import RadialNetwork
 
 class PrivateRadialNetwork(RadialNetwork):
 
-    def __init__(self, name, save_folderpath, private_dss_filepath=None, original_dss_filepath=None, epsilon=None, appliance_power_bound=None):
+    def __init__(self, name, save_folderpath, dss_filepath, epsilon=None, appliance_power_bound=None):
 
-        # Initialize From Private DSS File
-        if private_dss_filepath:
-            self.dss_filepath = private_dss_filepath
-            super().__init__(name, private_dss_filepath)
-            self.epsilon, self.B = self.read_privacy_params()
-        else:
-            self.dss_filepath = original_dss_filepath
-            self.epsilon, self.B = epsilon, appliance_power_bound
-            super().__init__(name, original_dss_filepath)
-            self.write_privacy_params()
+        self.dss_filepath = dss_filepath
+        if epsilon: self.epsilon = epsilon
+        if appliance_power_bound: self.B = appliance_power_bound
+        super().__init__(name, dss_filepath)
 
         # Initialize Base Class
         self.network_folderpath = os.path.join(save_folderpath)
         if not os.path.exists(self.network_folderpath): os.makedirs(self.network_folderpath)
-        self.private_dss_filepath = os.path.join(save_folderpath, name + '.dss')
+        self.dss_filepath = os.path.join(save_folderpath, name + '.dss')
+        self.export_to_dss()
 
     def read_privacy_params(self):
         epsilon = None
@@ -100,3 +99,67 @@ class PrivateRadialNetwork(RadialNetwork):
         noise = np.random.laplace(0, b, size=(num_houses, len(load_profile)))
         noisy_load_profile = load_profile + noise.sum(axis=0)
         return noisy_load_profile
+
+    def load_redd_houses(self, redd_folderpath, T_limit=None):
+        filepaths = [
+            os.path.join(redd_folderpath, f)
+            for f in os.listdir(redd_folderpath)
+            if f.endswith(".mat") and "HF" not in f
+        ]
+        houses = []
+        for k in range(6):
+            data = process_data(load_data(filepaths[k]))
+            P = data['Y']
+            if T_limit: P = P[:T_limit]
+            houses.append(P)
+        return houses
+
+    def assign_houses_to_load(self, houses, desired_load_power):
+        num_houses = 0
+        n = min(len(h) for h in houses)
+        load_profile = np.zeros(n)
+
+        while np.max(load_profile) < desired_load_power:
+            i = random.randrange(len(houses))
+            temp_profile = load_profile + houses[i][:n]
+            temp = np.max(temp_profile)
+            if temp > desired_load_power:
+                num_houses += 1
+                factor = desired_load_power / np.max(temp)
+                scaled_load_profile = houses[i][:n] * factor
+                load_profile = load_profile + scaled_load_profile
+                break
+            else:
+                num_houses += 1
+                load_profile += houses[i]
+
+        return num_houses, load_profile
+
+    def make_private_neighborhood(self, houses):
+
+        P_loads_original = self.P
+        Q_loads_original = self.Q
+        P_loads = {}
+        Q_loads = {}
+        P_loads_tilde = {}
+        Q_loads_tilde = {}
+
+        n_houses_list = []
+
+        for node, profile in P_loads_original.items():
+            P_max = np.max(profile)
+            Q_max = np.max(Q_loads_original[node])
+            ratio = 0.0 if np.isclose(P_max, 0.0) else Q_max / P_max
+            # Regular Neighborhood
+            n_houses, load_profile = self.assign_houses_to_load(houses, ratio)
+            n_houses_list.append(n_houses)
+            P_loads[node] = load_profile
+            Q_loads[node] = load_profile * ratio
+            # Private Neighborhood
+            P_loads_tilde[node] = self.make_private_load_profile(load_profile, n_houses)
+            Q_loads_tilde[node] = P_loads_tilde[node] * ratio
+
+        self.P = P_loads
+        self.Q = Q_loads
+        self.P_tilde = P_loads_tilde
+        self.Q_tilde = Q_loads_tilde
