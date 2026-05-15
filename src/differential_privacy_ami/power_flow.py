@@ -132,7 +132,7 @@ class RadialNetwork:
                 f.write(
                     f"New Line.L_{i}_{j} "
                     f"bus1=bus{i} bus2=bus{j} "
-                    f"r1={r} x1={x} r0={r} x0={x}" # TODO: Is this correct, or should zero-sequence impedance be zero?
+                    f"r1={r} x1={x} r0={r} x0={x} " # TODO: Is this correct, or should zero-sequence impedance be zero?
                     f"length=1 units=km\n"
                 )
             f.write("\n")
