@@ -331,7 +331,7 @@ class RadialNetwork:
                 q[(i,j,t)] = q_ij
                 r_ij = self.r[(i,j)]
                 x_ij = self.x[(i,j)]
-                v_squared_drop[(i,j,t)] = - 2 * (r_ij * p_ij + x_ij * q_ij) # |V_j|^2 - |V_i|^2
+                v_squared_drop[(i,j,t)] = 2 * (r_ij * p_ij + x_ij * q_ij) # |V_j|^2 - |V_i|^2
             for i in self.nodes:
                 V_squared = self.V0**2 - sum(v_squared_drop[(h,k,t)] for h,k in self.L(i)) # Squared Nodal Voltage is sum of upstream squared voltage drops
                 V[(i,t)] = np.sqrt(V_squared) # Nodal Voltage
@@ -442,18 +442,18 @@ class RadialNetwork:
             V_data = dss.Monitors.Channel(1)
             V[j] = V_data
             i_data = dss.Monitors.Channel(3)
-            i_flow[(i,j)] = i_data * 1e3 #  TODO: This unit conversion is also unexplained.
+            i_flow[(i,j)] = i_data * 1e3 # kA -> W
 
             dss.Monitors.Name(f"P_{i}_{j}")
             s_data = dss.Monitors.Channel(1)
             theta_data = dss.Monitors.Channel(2)
             p_data = s_data * np.cos(theta_data) # elementwise for two np 1d arrays
             q_data = s_data * np.sin(theta_data)
-            p[(i,j)] = - p_data * 1e6 # kW -> W # TODO: unit conversion is wrong. DSS shouldn't be providing in MW
-            q[(i,j)] = - q_data * 1e6  # kW -> W
+            p[(i,j)] = - p_data * 1e6 # MW -> W
+            q[(i,j)] = - q_data * 1e6 # MW -> W
 
         for (i,j) in self.lines:
-            v[(i,j)] = V[i] - V[j] * 1e3 # TODO: This unit conversion is also unexplained.
+            v[(i,j)] = (V[i] - V[j]) * 1e3 # kV -> V
 
         self.V = V
         self.v = v
