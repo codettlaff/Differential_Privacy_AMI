@@ -17,9 +17,11 @@ def make_redd_neighboorhood_network(ieee_123_filepath, save_folderpath, redd_fol
 
     houses = ieee_123bus_network.load_redd_houses(redd_folderpath)
     P_loads, Q_loads, P_loads_tilde, Q_loads_tilde = ieee_123bus_network.make_private_neighborhood_loads(houses)
+    T_new = len(P_loads)
 
     redd_neighborhood = copy.deepcopy(ieee_123bus_network)
     redd_neighborhood.name = NETWORK_NAME
+    redd_neighborhood.T = T_new
     redd_neighborhood.dss_filepath = os.path.join(save_folderpath, redd_neighborhood.name + '.dss')
     redd_neighborhood.P = P_loads
     redd_neighborhood.Q = Q_loads
@@ -27,6 +29,7 @@ def make_redd_neighboorhood_network(ieee_123_filepath, save_folderpath, redd_fol
 
     redd_neighborhood_private = copy.deepcopy(ieee_123bus_network)
     redd_neighborhood_private.name = NETWORK_NAME + '_private'
+    redd_neighborhood_private.T = T_new
     redd_neighborhood_private.dss_filepath = os.path.join(save_folderpath, redd_neighborhood_private.name + '.dss')
     redd_neighborhood_private.P = P_loads_tilde
     redd_neighborhood_private.Q = Q_loads_tilde

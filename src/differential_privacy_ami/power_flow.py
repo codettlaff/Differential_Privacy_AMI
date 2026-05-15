@@ -64,6 +64,8 @@ class RadialNetwork:
         # Extract Loads - Full time-series
         dss.Loads.First()
         while True:
+            name = dss.Loads.Name()
+            dss.Circuit.SetActiveElement(name)
             bus = dss.CktElement.BusNames()[0].split(".")[0]
             i = bus_map[bus]
 
@@ -184,7 +186,7 @@ class RadialNetwork:
                     f"New Load.Load_{i} "
                     f"bus1=bus{i} "
                     f"phases=1 "
-                    f"conn-wye "
+                    f"conn=wye "
                     f"model=1 "
                     f"kV={(self.V0/1e3)*np.sqrt(3)} "
                     f"kW={load_kw[i]} "
