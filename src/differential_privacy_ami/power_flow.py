@@ -37,7 +37,7 @@ class RadialNetwork:
         bus_full = dss.CktElement.BusNames()[0]
         bus = bus_full.split('.')[0]
         dss.Circuit.SetActiveBus(bus)
-        self.V0 = dss.Bus.kVBase() * 1e3
+        self.V0 = (dss.Bus.kVBase() / np.sqrt(3)) * 1e3
 
         # Map Buses to Indices
         bus_names = dss.Circuit.AllBusNames()

@@ -54,7 +54,7 @@ class PrivateRadialNetwork:
         bus_full = dss.CktElement.BusNames()[0]
         bus = bus_full.split('.')[0]
         dss.Circuit.SetActiveBus(bus)
-        self.V0 = dss.Bus.kVBase() * 1e3
+        self.V0 = (dss.Bus.kVBase() / np.sqrt(3)) * 1e3
 
         # Map buses to indices
         bus_names = dss.Circuit.AllBusNames()
@@ -148,7 +148,7 @@ class PrivateRadialNetwork:
 
             # Circuit Definition
             f.write(f"Clear\n")
-            f.write(f"New Circuit.{self.name} basekv={self.V0/1e3} pu=1.0\n")
+            f.write(f"New Circuit.{self.name} phases=1 basekv={self.V0/1e3} pu=1.0\n")
             f.write(f"Edit Vsource.Source bus1=bus0\n") # Make sure root node is index 0.
 
             # Lines
