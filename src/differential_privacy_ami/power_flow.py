@@ -37,7 +37,7 @@ class RadialNetwork:
         bus_full = dss.CktElement.BusNames()[0]
         bus = bus_full.split('.')[0]
         dss.Circuit.SetActiveBus(bus)
-        self.V0 = (dss.Bus.kVBase() / np.sqrt(3)) * 1e3
+        self.V0 = (dss.Bus.kVBase() / (3 * np.sqrt(3))) * 1e3 # Go from line-to-line to single phase
 
         # Map Buses to Indices
         bus_names = dss.Circuit.AllBusNames()
@@ -123,7 +123,7 @@ class RadialNetwork:
         with open(self.dss_filepath, "w") as f:
             # Circuit Definition
             f.write("Clear\n")
-            f.write(f"New Circuit.{self.name} basekv={(self.V0/1e3)*np.sqrt(3)} pu=1.0\n")
+            f.write(f"New Circuit.{self.name} phases=1 basekv={(self.V0/1e3)*np.sqrt(3)} pu=1.0\n")
             f.write(f"Edit Vsource.Source bus1=bus0\n")  # Make sure root node is index 0.
             f.write("\n")
             # Lines
