@@ -124,6 +124,7 @@ class RadialNetwork:
             # Circuit Definition
             f.write("Clear\n")
             f.write(f"New Circuit.{self.name} basekv={self.V0/1e3} pu=1.0\n")
+            f.write(f"Edit Vsource.Source bus1=bus0\n")  # Make sure root node is index 0.
             f.write("\n")
             # Lines
             for (i, j) in self.lines:
@@ -425,6 +426,7 @@ class RadialNetwork:
                 f"New Monitor.V_{i}_{j} element=Line.L_{i}_{j} mode=0 terminal=2" # Voltage Current Mode To Bus
             )
 
+        dss.Text.Command("CalcVoltageBases")
         dss.Text.Command("Solve")
 
         # Root Node Monitor Data
