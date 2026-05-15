@@ -449,8 +449,8 @@ class RadialNetwork:
             theta_data = dss.Monitors.Channel(2)
             p_data = s_data * np.cos(theta_data) # elementwise for two np 1d arrays
             q_data = s_data * np.sin(theta_data)
-            p[(i,j)] = p_data * 1e3 # kW -> W
-            q[(i,j)] = q_data * 1e3  # kW -> W
+            p[(i,j)] = - p_data * 1e3 # kW -> W
+            q[(i,j)] = - q_data * 1e3  # kW -> W
 
         for (i,j) in self.lines:
             v[(i,j)] = V[i] - V[j]
