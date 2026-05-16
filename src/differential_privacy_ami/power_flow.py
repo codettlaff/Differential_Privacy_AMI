@@ -37,7 +37,7 @@ class RadialNetwork:
         bus_full = dss.CktElement.BusNames()[0]
         bus = bus_full.split('.')[0]
         dss.Circuit.SetActiveBus(bus)
-        self.V0 = (dss.Bus.kVBase() / (3 * np.sqrt(3))) * 1e3 # Go from line-to-line to single phase
+        self.V0 = (dss.Bus.kVBase() / np.sqrt(3)) * 1e3 # Go from line-to-line to single phase
 
         # Map Buses to Indices
         bus_names = dss.Circuit.AllBusNames()
@@ -196,6 +196,7 @@ class RadialNetwork:
             f.write("\n")
 
             # Simulation Setup
+            f.write(f'Set VoltageBases=[{self.V0 * np.sqrt(3) / 1e3}]\n')
             f.write("Set mode=Daily\n")
             f.write(f"Set number={self.T}\n")
             f.write(f"Set stepsize={self.interval}\n")
